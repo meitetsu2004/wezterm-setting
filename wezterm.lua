@@ -9,7 +9,7 @@ config.font_size = 14.0
 config.use_ime = true
 config.font = wezterm.font_with_fallback({
 	"MesloLGS Nerd Font Mono",
-	"Hiragino Kaku Gothic ProN", -- macOSの場合おすすめ
+	"Hiragino Kaku Gothic ProN",
 })
 
 ----------------------------------------------------

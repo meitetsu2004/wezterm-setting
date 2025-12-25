@@ -11,11 +11,10 @@ wezterm.on("update-right-status", function(window, pane)
 end)
 
 return {
-	-- Leaderキーは削除 (mods = "LEADER" は使いません)
 
 	keys = {
 		-- =========================================================
-		-- ワークスペース操作 (Cmd + Shift 系)
+		-- ワークスペース操作
 		-- =========================================================
 		{
 			-- Cmd + Shift + s: ワークスペース選択
@@ -51,7 +50,7 @@ return {
 		},
 
 		-- =========================================================
-		-- ペイン(画面)操作 (Cmd 系)
+		-- ペイン(画面)操作
 		-- =========================================================
 		-- Cmd + d: 右に分割 (Duplicate/Divide)
 		{ key = "d", mods = "SUPER", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
@@ -133,7 +132,7 @@ return {
 	},
 
 	-- =========================================================
-	-- キーテーブル (変更なし)
+	-- キーテーブル
 	-- =========================================================
 	key_tables = {
 		-- Resize mode (Cmd+r で入る)
@@ -145,7 +144,7 @@ return {
 			{ key = "Enter", action = "PopKeyTable" },
 			{ key = "Escape", action = "PopKeyTable" },
 		},
-		-- Copy mode (Cmd+x で入る) - 既存の設定を維持
+		-- Copy mode (Cmd+x で入る)
 		copy_mode = {
 			{ key = "h", mods = "NONE", action = act.CopyMode("MoveLeft") },
 			{ key = "j", mods = "NONE", action = act.CopyMode("MoveDown") },
