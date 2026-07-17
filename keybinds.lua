@@ -94,8 +94,8 @@ return {
 		-- Cmd + Shift + d: 下に分割
 		{ key = "d", mods = "SUPER|SHIFT", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
 
-		-- Cmd + w: ペインを閉じる (タブではなくペイン優先)
-		{ key = "w", mods = "SUPER", action = act.CloseCurrentPane({ confirm = true }) },
+		-- Cmd + Shift + w: ペインを閉じる
+		{ key = "w", mods = "SUPER|SHIFT", action = act.CloseCurrentPane({ confirm = true }) },
 
 		-- Cmd + z: ズーム切替 (現在のペインを最大化)
 		{ key = "z", mods = "SUPER", action = act.TogglePaneZoomState },
@@ -115,8 +115,8 @@ return {
 		-- =========================================================
 		-- Cmd + t: 新規タブ
 		{ key = "t", mods = "SUPER", action = act.SpawnTab("CurrentPaneDomain") },
-		-- Cmd + Shift + w: タブを閉じる
-		{ key = "w", mods = "SUPER|SHIFT", action = act.CloseCurrentTab({ confirm = true }) },
+		-- Cmd + w: タブを閉じる
+		{ key = "w", mods = "SUPER", action = act.CloseCurrentTab({ confirm = true }) },
 
 		-- タブ移動 (Cmd + Shift + [ / ]) ブラウザ準拠
 		{ key = "[", mods = "SUPER|SHIFT", action = act.ActivateTabRelative(-1) },
@@ -212,7 +212,12 @@ return {
 			{ key = "v", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Cell" }) },
 			{ key = "v", mods = "CTRL", action = act.CopyMode({ SetSelectionMode = "Block" }) },
 			{ key = "V", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Line" }) },
-			{ key = "y", mods = "NONE", action = act.CopyTo("Clipboard") },
+			-- y: ヤンクしてコピーモードを抜ける (vim/tmux準拠)
+			{
+				key = "y",
+				mods = "NONE",
+				action = act.Multiple({ { CopyTo = "ClipboardAndPrimarySelection" }, { CopyMode = "Close" } }),
+			},
 			{
 				key = "Enter",
 				mods = "NONE",
