@@ -93,6 +93,21 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 end)
 
 ----------------------------------------------------
+-- SSH ドメイン
+----------------------------------------------------
+-- ~/.ssh/config の Host エントリから SSH:<host> / SSHMUX:<host> を自動生成する。
+-- SSH:<host>    = multiplexing "None" (リモートに wezterm 不要)
+-- SSHMUX:<host> = multiplexing "WezTerm" (リモートに wezterm-mux-server が必要)
+config.ssh_domains = wezterm.default_ssh_domains()
+
+for _, dom in ipairs(config.ssh_domains) do
+	-- リモートが POSIX shell である前提を置くと、pane 分割/タブ生成の際に
+	-- OSC 7 で報告された CWD へ cd してからコマンドを起動してくれる。
+	-- (multiplexing = "None" のドメインでのみ効く。リモート側の OSC 7 設定が前提)
+	dom.assume_shell = "Posix"
+end
+
+----------------------------------------------------
 -- keybinds
 ----------------------------------------------------
 config.disable_default_key_bindings = true

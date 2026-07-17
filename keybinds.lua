@@ -42,6 +42,14 @@ return {
 		-- コピーモード: <leader> [ (tmux準拠)
 		{ key = "[", mods = "LEADER", action = act.ActivateCopyMode },
 
+		-- SSHドメインに接続: <leader> a (Attach)
+		-- ここで SSH:d59 を選ぶと、以降その pane を分割してもリモートの CWD を引き継ぐ
+		{
+			key = "a",
+			mods = "LEADER",
+			action = act.ShowLauncherArgs({ flags = "FUZZY|DOMAINS", title = "Attach domain" }),
+		},
+
 		-- =========================================================
 		-- ワークスペース操作
 		-- =========================================================
