@@ -14,6 +14,35 @@ return {
 
 	keys = {
 		-- =========================================================
+		-- tmux風 <leader>(Ctrl+G) 操作
+		-- =========================================================
+		-- ペイン分割: <leader> | で左右分割 / <leader> - または " で上下分割
+		{ key = "|", mods = "LEADER|SHIFT", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+		{ key = "-", mods = "LEADER", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
+		{ key = '"', mods = "LEADER|SHIFT", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
+
+		-- ペイン移動: <leader> → hjkl (vim風)
+		{ key = "h", mods = "LEADER", action = act.ActivatePaneDirection("Left") },
+		{ key = "j", mods = "LEADER", action = act.ActivatePaneDirection("Down") },
+		{ key = "k", mods = "LEADER", action = act.ActivatePaneDirection("Up") },
+		{ key = "l", mods = "LEADER", action = act.ActivatePaneDirection("Right") },
+
+		-- ペインを閉じる / ズーム切替
+		{ key = "x", mods = "LEADER", action = act.CloseCurrentPane({ confirm = true }) },
+		{ key = "z", mods = "LEADER", action = act.TogglePaneZoomState },
+
+		-- ペインサイズ調整モードへ (<leader> r → hjklで調整、Esc/Enterで抜ける)
+		{ key = "r", mods = "LEADER", action = act.ActivateKeyTable({ name = "resize_pane", one_shot = false }) },
+
+		-- タブ操作 (tmuxのwindow相当): <leader> c で新規、n/p で前後移動
+		{ key = "c", mods = "LEADER", action = act.SpawnTab("CurrentPaneDomain") },
+		{ key = "n", mods = "LEADER", action = act.ActivateTabRelative(1) },
+		{ key = "p", mods = "LEADER", action = act.ActivateTabRelative(-1) },
+
+		-- コピーモード: <leader> [ (tmux準拠)
+		{ key = "[", mods = "LEADER", action = act.ActivateCopyMode },
+
+		-- =========================================================
 		-- ワークスペース操作
 		-- =========================================================
 		{
