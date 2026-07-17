@@ -15,24 +15,17 @@ config.font = wezterm.font_with_fallback({
 ----------------------------------------------------
 -- 色・背景
 ----------------------------------------------------
--- kanagawa-paper (neovim) と揃えた配色
--- colors/*.toml は kanagawa-paper.nvim の extras/wezterm から取得
--- canvas (light) に切り替える場合は "kanagawa-paper-canvas" を指定
-config.color_scheme = "kanagawa-paper-ink"
-
--- 以前の配色に戻す場合は下記のコメントを解除し、config.color_scheme を削除する
--- (config.colors は color_scheme より優先されるため、併用不可)
--- config.colors = {
--- 	foreground = "#CBE0F0",
--- 	background = "#011423",
--- 	cursor_bg = "#47FF9C",
--- 	cursor_border = "#47FF9C",
--- 	cursor_fg = "#011423",
--- 	selection_bg = "#033259",
--- 	selection_fg = "#CBE0F0",
--- 	ansi = { "#214969", "#E52E2E", "#44FFB1", "#FFE073", "#0FC5ED", "#a277ff", "#24EAF7", "#24EAF7" },
--- 	brights = { "#214969", "#E52E2E", "#44FFB1", "#FFE073", "#A277FF", "#a277ff", "#24EAF7", "#24EAF7" },
--- }
+config.colors = {
+	foreground = "#CBE0F0",
+	background = "#011423",
+	cursor_bg = "#47FF9C",
+	cursor_border = "#47FF9C",
+	cursor_fg = "#011423",
+	selection_bg = "#033259",
+	selection_fg = "#CBE0F0",
+	ansi = { "#214969", "#E52E2E", "#44FFB1", "#FFE073", "#0FC5ED", "#a277ff", "#24EAF7", "#24EAF7" },
+	brights = { "#214969", "#E52E2E", "#44FFB1", "#FFE073", "#A277FF", "#a277ff", "#24EAF7", "#24EAF7" },
+}
 
 -- Kanagawa (neovim) - wave palette
 -- config.color_scheme = "Kanagawa (Gogh)"
@@ -60,9 +53,7 @@ config.window_frame = {
 
 -- タブバーを背景色に合わせる
 config.window_background_gradient = {
-	-- kanagawa-paper-ink の background
-	colors = { "#1F1F28" },
-	-- colors = { "#011423" },
+	colors = { "#011423" },
 }
 
 -- タブの追加ボタンを非表示
@@ -79,21 +70,13 @@ local SOLID_LEFT_ARROW = wezterm.nerdfonts.ple_lower_right_triangle
 local SOLID_RIGHT_ARROW = wezterm.nerdfonts.ple_upper_left_triangle
 
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
-	-- kanagawa-paper-ink のタブバー配色
-	local background = "#2A2A37"
-	local foreground = "#9e9b93"
+	local background = "#5c6d74"
+	local foreground = "#FFFFFF"
 	local edge_background = "none"
 	if tab.is_active then
-		background = "#c4b28a"
-		foreground = "#1F1F28"
+		background = "#ae8b2d"
+		foreground = "#FFFFFF"
 	end
-	-- 以前の配色:
-	-- local background = "#5c6d74"
-	-- local foreground = "#FFFFFF"
-	-- if tab.is_active then
-	-- 	background = "#ae8b2d"
-	-- 	foreground = "#FFFFFF"
-	-- end
 	local edge_foreground = background
 	local title = "   " .. wezterm.truncate_right(tab.active_pane.title, max_width - 1) .. "   "
 	return {
