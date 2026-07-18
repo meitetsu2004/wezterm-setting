@@ -1,6 +1,45 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
 
+-- =========================================================
+-- copy_mode で Vim風の数字プレフィックス(count)を扱うヘルパ
+--   例: 40j で下に40行移動
+-- =========================================================
+-- モジュールローカルに count を保持 (configリロードでリセットされる)
+local copy_mode_count = ""
+local COPY_MODE_COUNT_MAX = 10000
+
+-- 数字キーを押したら count に積む action
+local function count_digit(d)
+	return wezterm.action_callback(function()
+		copy_mode_count = copy_mode_count .. d
+	end)
+end
+
+-- 貯めた count の回数だけ movement を実行してリセットする action
+local function repeatable(movement)
+	return wezterm.action_callback(function(window, pane)
+		local n = tonumber(copy_mode_count) or 1
+		copy_mode_count = ""
+		if n < 1 then
+			n = 1
+		elseif n > COPY_MODE_COUNT_MAX then
+			n = COPY_MODE_COUNT_MAX
+		end
+		for _ = 1, n do
+			window:perform_action(act.CopyMode(movement), pane)
+		end
+	end)
+end
+
+-- count を捨てる (movement以外のキーで pending な数字をクリアする)
+local function reset_count(action)
+	return wezterm.action_callback(function(window, pane)
+		copy_mode_count = ""
+		window:perform_action(action, pane)
+	end)
+end
+
 -- Show which key table is active in the status area
 wezterm.on("update-right-status", function(window, pane)
 	local name = window:active_key_table()
@@ -39,8 +78,8 @@ return {
 		{ key = "n", mods = "LEADER", action = act.ActivateTabRelative(1) },
 		{ key = "p", mods = "LEADER", action = act.ActivateTabRelative(-1) },
 
-		-- コピーモード: <leader> [ (tmux準拠)
-		{ key = "[", mods = "LEADER", action = act.ActivateCopyMode },
+		-- コピーモード: <leader> [ (tmux準拠) / 入る時に count をリセット
+		{ key = "[", mods = "LEADER", action = reset_count(act.ActivateCopyMode) },
 
 		-- SSHドメインに接続: <leader> a (Attach)
 		-- ここで SSH:d59 を選ぶと、以降その pane を分割してもリモートの CWD を引き継ぐ
@@ -144,7 +183,7 @@ return {
 		-- その他便利機能
 		-- =========================================================
 		-- コピーモード: Cmd + x (eXtract のイメージ)
-		{ key = "x", mods = "SUPER", action = act.ActivateCopyMode },
+		{ key = "x", mods = "SUPER", action = reset_count(act.ActivateCopyMode) },
 
 		-- フルスクリーン: Cmd + Enter
 		{ key = "Enter", mods = "SUPER", action = act.ToggleFullScreen },
@@ -183,19 +222,42 @@ return {
 		},
 		-- Copy mode (Cmd+x で入る)
 		copy_mode = {
-			{ key = "h", mods = "NONE", action = act.CopyMode("MoveLeft") },
-			{ key = "j", mods = "NONE", action = act.CopyMode("MoveDown") },
-			{ key = "k", mods = "NONE", action = act.CopyMode("MoveUp") },
-			{ key = "l", mods = "NONE", action = act.CopyMode("MoveRight") },
-			{ key = "^", mods = "NONE", action = act.CopyMode("MoveToStartOfLineContent") },
-			{ key = "$", mods = "NONE", action = act.CopyMode("MoveToEndOfLineContent") },
-			{ key = "0", mods = "NONE", action = act.CopyMode("MoveToStartOfLine") },
-			{ key = "o", mods = "NONE", action = act.CopyMode("MoveToSelectionOtherEnd") },
-			{ key = "O", mods = "NONE", action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
-			{ key = ";", mods = "NONE", action = act.CopyMode("JumpAgain") },
-			{ key = "w", mods = "NONE", action = act.CopyMode("MoveForwardWord") },
-			{ key = "b", mods = "NONE", action = act.CopyMode("MoveBackwardWord") },
-			{ key = "e", mods = "NONE", action = act.CopyMode("MoveForwardWordEnd") },
+			-- 数字プレフィックス(count): 1-9 を貯める。0 は count 継続中のみ数字扱い
+			{ key = "1", mods = "NONE", action = count_digit("1") },
+			{ key = "2", mods = "NONE", action = count_digit("2") },
+			{ key = "3", mods = "NONE", action = count_digit("3") },
+			{ key = "4", mods = "NONE", action = count_digit("4") },
+			{ key = "5", mods = "NONE", action = count_digit("5") },
+			{ key = "6", mods = "NONE", action = count_digit("6") },
+			{ key = "7", mods = "NONE", action = count_digit("7") },
+			{ key = "8", mods = "NONE", action = count_digit("8") },
+			{ key = "9", mods = "NONE", action = count_digit("9") },
+
+			-- カーソル移動 (count 対応)
+			{ key = "h", mods = "NONE", action = repeatable("MoveLeft") },
+			{ key = "j", mods = "NONE", action = repeatable("MoveDown") },
+			{ key = "k", mods = "NONE", action = repeatable("MoveUp") },
+			{ key = "l", mods = "NONE", action = repeatable("MoveRight") },
+			{ key = "^", mods = "NONE", action = reset_count(act.CopyMode("MoveToStartOfLineContent")) },
+			{ key = "$", mods = "NONE", action = reset_count(act.CopyMode("MoveToEndOfLineContent")) },
+			-- 0: count 継続中なら数字、そうでなければ行頭へ (vim準拠)
+			{
+				key = "0",
+				mods = "NONE",
+				action = wezterm.action_callback(function(window, pane)
+					if copy_mode_count == "" then
+						window:perform_action(act.CopyMode("MoveToStartOfLine"), pane)
+					else
+						copy_mode_count = copy_mode_count .. "0"
+					end
+				end),
+			},
+			{ key = "o", mods = "NONE", action = reset_count(act.CopyMode("MoveToSelectionOtherEnd")) },
+			{ key = "O", mods = "NONE", action = reset_count(act.CopyMode("MoveToSelectionOtherEndHoriz")) },
+			{ key = ";", mods = "NONE", action = reset_count(act.CopyMode("JumpAgain")) },
+			{ key = "w", mods = "NONE", action = repeatable("MoveForwardWord") },
+			{ key = "b", mods = "NONE", action = repeatable("MoveBackwardWord") },
+			{ key = "e", mods = "NONE", action = repeatable("MoveForwardWordEnd") },
 			{ key = "t", mods = "NONE", action = act.CopyMode({ JumpForward = { prev_char = true } }) },
 			{ key = "f", mods = "NONE", action = act.CopyMode({ JumpForward = { prev_char = false } }) },
 			{ key = "T", mods = "NONE", action = act.CopyMode({ JumpBackward = { prev_char = true } }) },
