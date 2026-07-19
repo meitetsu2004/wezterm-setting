@@ -73,6 +73,41 @@ return {
 		-- ペインサイズ調整モードへ (<leader> r → hjklで調整、Esc/Enterで抜ける)
 		{ key = "r", mods = "LEADER", action = act.ActivateKeyTable({ name = "resize_pane", one_shot = false }) },
 
+		-- tmux風リサイズ: <leader> H/J/K/L で調整開始 → そのまま HJKL 連打で継続
+		-- (1秒間キー入力が無い or Esc/Enter で自動的に抜ける)
+		{
+			key = "H",
+			mods = "LEADER|SHIFT",
+			action = act.Multiple({
+				act.ActivateKeyTable({ name = "resize_pane", one_shot = false, timeout_milliseconds = 1000 }),
+				act.AdjustPaneSize({ "Left", 3 }),
+			}),
+		},
+		{
+			key = "J",
+			mods = "LEADER|SHIFT",
+			action = act.Multiple({
+				act.ActivateKeyTable({ name = "resize_pane", one_shot = false, timeout_milliseconds = 1000 }),
+				act.AdjustPaneSize({ "Down", 3 }),
+			}),
+		},
+		{
+			key = "K",
+			mods = "LEADER|SHIFT",
+			action = act.Multiple({
+				act.ActivateKeyTable({ name = "resize_pane", one_shot = false, timeout_milliseconds = 1000 }),
+				act.AdjustPaneSize({ "Up", 3 }),
+			}),
+		},
+		{
+			key = "L",
+			mods = "LEADER|SHIFT",
+			action = act.Multiple({
+				act.ActivateKeyTable({ name = "resize_pane", one_shot = false, timeout_milliseconds = 1000 }),
+				act.AdjustPaneSize({ "Right", 3 }),
+			}),
+		},
+
 		-- タブ操作 (tmuxのwindow相当): <leader> c で新規、n/p で前後移動
 		{ key = "c", mods = "LEADER", action = act.SpawnTab("CurrentPaneDomain") },
 		{ key = "n", mods = "LEADER", action = act.ActivateTabRelative(1) },
@@ -213,12 +248,19 @@ return {
 	key_tables = {
 		-- Resize mode (Cmd+r で入る)
 		resize_pane = {
+			-- 小文字: 1刻みの微調整
 			{ key = "h", action = act.AdjustPaneSize({ "Left", 1 }) },
 			{ key = "l", action = act.AdjustPaneSize({ "Right", 1 }) },
 			{ key = "k", action = act.AdjustPaneSize({ "Up", 1 }) },
 			{ key = "j", action = act.AdjustPaneSize({ "Down", 1 }) },
+			-- 大文字: 3刻み (tmux風の HJKL 連打調整)
+			{ key = "H", mods = "SHIFT", action = act.AdjustPaneSize({ "Left", 3 }) },
+			{ key = "L", mods = "SHIFT", action = act.AdjustPaneSize({ "Right", 3 }) },
+			{ key = "K", mods = "SHIFT", action = act.AdjustPaneSize({ "Up", 3 }) },
+			{ key = "J", mods = "SHIFT", action = act.AdjustPaneSize({ "Down", 3 }) },
 			{ key = "Enter", action = "PopKeyTable" },
 			{ key = "Escape", action = "PopKeyTable" },
+			{ key = "q", action = "PopKeyTable" },
 		},
 		-- Copy mode (Cmd+x で入る)
 		copy_mode = {
