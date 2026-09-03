@@ -66,6 +66,10 @@ return {
 		{ key = "k", mods = "LEADER", action = act.ActivatePaneDirection("Up") },
 		{ key = "l", mods = "LEADER", action = act.ActivatePaneDirection("Right") },
 
+		-- ペイン配置を入れ替え: <leader> { / }
+		{ key = "{", mods = "LEADER|SHIFT", action = act.RotatePanes("CounterClockwise") },
+		{ key = "}", mods = "LEADER|SHIFT", action = act.RotatePanes("Clockwise") },
+
 		-- ペインを閉じる / ズーム切替
 		{ key = "x", mods = "LEADER", action = act.CloseCurrentPane({ confirm = true }) },
 		{ key = "z", mods = "LEADER", action = act.TogglePaneZoomState },
