@@ -53,7 +53,7 @@ return {
 
 	keys = {
 		-- =========================================================
-		-- tmux風 <leader>(Ctrl+G) 操作
+		-- tmux風 <leader>(Ctrl+Q) 操作
 		-- =========================================================
 		-- ペイン分割: <leader> | で左右分割 / <leader> - または " で上下分割
 		{ key = "|", mods = "LEADER|SHIFT", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
