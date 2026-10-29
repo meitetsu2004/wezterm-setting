@@ -244,6 +244,10 @@ return {
 		-- クリップボード
 		{ key = "c", mods = "SUPER", action = act.CopyTo("Clipboard") },
 		{ key = "v", mods = "SUPER", action = act.PasteFrom("Clipboard") },
+
+		-- 単語単位のカーソル移動：opt + 矢印でできるように
+		{ key = "LeftArrow", mods = "OPT", action = act.SendKey({ key = "b", mods = "ALT" }) },
+		{ key = "RightArrow", mods = "OPT", action = act.SendKey({ key = "f", mods = "ALT" }) },
 	},
 
 	-- =========================================================
