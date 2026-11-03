@@ -227,6 +227,9 @@ return {
 		-- フルスクリーン: Cmd + Enter
 		{ key = "Enter", mods = "SUPER", action = act.ToggleFullScreen },
 
+		-- 改行: Shift + Enter (Opt+Enter と同じ ESC+CR を送る。Claude Code / Codex 用、tmux・SSH 越しでも有効)
+		{ key = "Enter", mods = "SHIFT", action = act.SendString("\x1b\r") },
+
 		-- コマンドパレット: Cmd + p
 		{ key = "p", mods = "SUPER", action = act.ActivateCommandPalette },
 
